@@ -5,6 +5,8 @@ import re
 
 import six
 
+from .compat import total_ordering
+
 
 __all__ = ["Version", "VersionPredicate", "suggest_normalized_version"]
 
@@ -37,6 +39,7 @@ _VERSION_RE = re.compile(r"""
     $""", re.VERBOSE)
 
 
+@total_ordering
 class Version(object):
 
     def __init__(self, version, *args, **kwargs):
@@ -62,18 +65,6 @@ class Version(object):
             raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
         left, right = self._normalize(self.parts, other.parts)
         return left < right
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __gt__(self, other):
-        return not (self.__lt__(other) or self.__eq__(other))
-
-    def __le__(self, other):
-        return self.__eq__(other) or self.__lt__(other)
-
-    def __ge__(self, other):
-        return self.__eq__(other) or self.__gt__(other)
 
     def __hash__(self):
         return hash(self.parts)
