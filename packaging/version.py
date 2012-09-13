@@ -368,12 +368,12 @@ class VersionPredicate(object):
             return  # @@@ Not Covered
 
         predicates = predicates.groupdict()
-        if predicates['versions'] is not None:
+        if predicates['versions']:
             versions = predicates['versions']
         else:
             versions = predicates.get('versions2')
 
-        if versions is not None:
+        if versions:
             for version in versions.split(','):
                 if version.strip() == '':
                     continue
