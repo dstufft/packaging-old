@@ -1,10 +1,10 @@
-"""Implementation of the versioning scheme defined in PEP 386."""
-
+"""
+Implementation of the version scheme defined in PEP 386.
+"""
 import re
 
-from distutils2.errors import IrrationalVersionError, HugeMajorVersionNumError
 
-__all__ = ['NormalizedVersion', 'suggest_normalized_version',
+__all__ = ['Version', 'suggest_normalized_version',
            'VersionPredicate', 'is_valid_version', 'is_valid_versions',
            'is_valid_predicate']
 
@@ -39,7 +39,7 @@ _VERSION_RE = re.compile(r'''
     $''', re.VERBOSE)
 
 
-class NormalizedVersion(object):
+class Version(object):
     """A rational version.
 
     Good:
@@ -57,15 +57,14 @@ class NormalizedVersion(object):
         1.2a        # release level must have a release serial
         1.2.3b
     """
-    def __init__(self, s, error_on_huge_major_num=True,
-                 drop_trailing_zeros=False):
-        """Create a NormalizedVersion instance from a version string.
+    def __init__(self, version, error_on_huge_major_num=True, drop_trailing_zeros=False):
+        """Create a Version instance from a version string.
 
         @param s {str} The version string.
         @param error_on_huge_major_num {bool} Whether to consider an
             apparent use of a year or full date as the major version number
             an error. Default True. One of the observed patterns on PyPI before
-            the introduction of `NormalizedVersion` was version numbers like
+            the introduction of `Version` was version numbers like
             this:
                 2009.01.03
                 20040603
@@ -79,9 +78,10 @@ class NormalizedVersion(object):
 
             from the returned list. Default True.
         """
+        self.version = version
         self.is_final = True  # by default, consider a version as final.
         self.drop_trailing_zeros = drop_trailing_zeros
-        self._parse(s, error_on_huge_major_num)
+        self._parse(self.version, error_on_huge_major_num)
 
     @classmethod
     def from_parts(cls, version, prerelease=_FINAL_MARKER,
@@ -92,7 +92,7 @@ class NormalizedVersion(object):
         """Parses a string version into parts."""
         match = _VERSION_RE.search(s)
         if not match:
-            raise IrrationalVersionError(s)
+            raise ValueError("Invalid version '{version}'".format(version=s))
 
         groups = match.groupdict()
         parts = []
@@ -132,8 +132,7 @@ class NormalizedVersion(object):
             parts.append(_FINAL_MARKER)
         self.parts = tuple(parts)
         if error_on_huge_major_num and self.parts[0][0] > 1980:
-            raise HugeMajorVersionNumError("huge major version number, %r, "
-               "which might cause future problems: %r" % (self.parts[0][0], s))
+            raise ValueError("Huge major version number '{major}' in '{version}', which might cause future problems".format(major=self.parts[0][0], version=s))
 
     def _parse_numdots(self, s, full_ver_str, pad_zeros_length=0):
         """Parse 'N.N.N' sequences, return a list of ints.
@@ -147,8 +146,7 @@ class NormalizedVersion(object):
         nums = []
         for n in s.split("."):
             if len(n) > 1 and n[0] == '0':
-                raise IrrationalVersionError("cannot have leading zero in "
-                    "version number segment: '%s' in %r" % (n, full_ver_str))
+                raise ValueError("Cannot have leading zero in a version number segment: '{number}' in '{version}'".format(number=n, version=full_ver_str))
             nums.append(int(n))
         if self.drop_trailing_zeros:
             while nums and nums[-1] == 0:
@@ -185,18 +183,14 @@ class NormalizedVersion(object):
     def __repr__(self):
         return "%s('%s')" % (self.__class__.__name__, self)
 
-    def _cannot_compare(self, other):
-        raise TypeError("cannot compare %s and %s"
-                % (type(self).__name__, type(other).__name__))
-
     def __eq__(self, other):
-        if not isinstance(other, NormalizedVersion):
-            self._cannot_compare(other)
+        if not isinstance(other, Version):
+            raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
         return self.parts == other.parts
 
     def __lt__(self, other):
-        if not isinstance(other, NormalizedVersion):
-            self._cannot_compare(other)
+        if not isinstance(other, Version):
+            raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
         return self.parts < other.parts
 
     def __ne__(self, other):
@@ -219,14 +213,14 @@ class NormalizedVersion(object):
 def suggest_normalized_version(s):
     """Suggest a normalized version close to the given version string.
 
-    If you have a version string that isn't rational (i.e. NormalizedVersion
+    If you have a version string that isn't rational (i.e. Version
     doesn't like it) then you might be able to get an equivalent (or close)
     rational version from this function.
 
     This does a number of simple normalizations to the given string, based
     on observation of versions currently in use on PyPI. Given a dump of
     those version during PyCon 2009, 4287 of them:
-    - 2312 (53.93%) match NormalizedVersion without change
+    - 2312 (53.93%) match Version without change
       with the automatic suggestion
     - 3474 (81.04%) match when using this suggestion method
 
@@ -234,9 +228,9 @@ def suggest_normalized_version(s):
     @returns A rational version string, or None, if couldn't determine one.
     """
     try:
-        NormalizedVersion(s)
+        Version(s)
         return s   # already rational
-    except IrrationalVersionError:
+    except ValueError:
         pass
 
     rs = s.lower()
@@ -321,9 +315,9 @@ def suggest_normalized_version(s):
     rs = re.sub(r"p(\d+)$", r".post\1", rs)
 
     try:
-        NormalizedVersion(rs)
+        Version(rs)
         return rs   # already rational
-    except IrrationalVersionError:
+    except ValueError:
         pass
     return None
 
@@ -343,7 +337,7 @@ def _split_predicate(predicate):
         comp, version = '==', predicate
     else:
         comp, version = match.groups()
-    return comp, NormalizedVersion(version)
+    return comp, Version(version)
 
 
 class VersionPredicate(object):
@@ -389,7 +383,7 @@ class VersionPredicate(object):
     def match(self, version):
         """Check if the provided version matches the predicates."""
         if isinstance(version, basestring):
-            version = NormalizedVersion(version)
+            version = Version(version)
         for operator, predicate in self.predicates:
             if not self._operators[operator](version, predicate):
                 return False
@@ -420,7 +414,7 @@ class _Version(VersionPredicate):
 def is_valid_predicate(predicate):
     try:
         VersionPredicate(predicate)
-    except (ValueError, IrrationalVersionError):
+    except ValueError:
         return False
     else:
         return True
@@ -429,7 +423,7 @@ def is_valid_predicate(predicate):
 def is_valid_versions(predicate):
     try:
         _Versions(predicate)
-    except (ValueError, IrrationalVersionError):
+    except ValueError:
         return False
     else:
         return True
@@ -438,7 +432,7 @@ def is_valid_versions(predicate):
 def is_valid_version(predicate):
     try:
         _Version(predicate)
-    except (ValueError, IrrationalVersionError):
+    except ValueError:
         return False
     else:
         return True
