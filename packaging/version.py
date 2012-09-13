@@ -155,8 +155,7 @@ class Version(object):
 
         return [cast(n) for n in version.split(".")]
 
-    @staticmethod
-    def _normalize(*all_parts):
+    def _normalize(self, *all_parts):
         def pad(parts, target):
             amount = target - len(parts[0])
             return (parts[0] + (0,) * amount,) + parts[1:]
