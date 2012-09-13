@@ -144,16 +144,6 @@ _VERSIONS = re.compile(r"^\s*\((?P<versions>.*)\)\s*$")
 _SPLIT_CMP = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
 
 
-def _split_predicate(predicate):
-    match = _SPLIT_CMP.match(predicate)
-    if match is None:
-        # Use the special startswith feature
-        comp, version = "", predicate
-    else:
-        comp, version = match.groups()
-    return comp, Version(version)
-
-
 class VersionPredicate(object):
     """
     Defines a predicate: ProjectName (>ver1,ver2, ..)
@@ -190,7 +180,7 @@ class VersionPredicate(object):
         if predicates["versions"]:
             for version in predicates["versions"].split(","):
                 if version.strip():
-                    self.predicates.append(_split_predicate(version))
+                    self.predicates.append(self._split_predicate(version))
 
     def __str__(self):
         return self._string
@@ -204,6 +194,16 @@ class VersionPredicate(object):
             version = Version(version)
 
         return all([self._operators[operator](version, predicate) for operator, predicate in self.predicates])
+
+    @staticmethod
+    def _split_predicate(predicate):
+        match = _SPLIT_CMP.match(predicate)
+        if match is None:
+            # Use the special startswith feature
+            comp, version = "", predicate
+        else:
+            comp, version = match.groups()
+        return comp, Version(version)
 
 
 def suggest(version, cls=Version):
