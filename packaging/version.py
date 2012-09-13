@@ -111,28 +111,30 @@ class Version(object):
         parts.append(tuple(_parse_numerical(groups["version"])))
 
         # prerelease
-        prerel = groups.get('prerel')
+        prerel = groups.get("prerel")
         if prerel is not None:
-            block = [prerel]
-            block += _parse_numerical(groups.get("prerelversion"))
-            parts.append(tuple(block))
+            parts.append(tuple([prerel] + _parse_numerical(groups.get("prerelversion"))))
         else:
             parts.append(_FINAL_MARKER)
 
         # postdev
-        if groups.get('postdev'):
-            post = groups.get('post')
-            dev = groups.get('dev')
-            postdev = []
-            if post is not None:
-                postdev.extend((_FINAL_MARKER[0], 'post', int(post)))
+        if groups.get("postdev"):
+            post, dev = groups.get("post"), groups.get("dev")
+
+            _parts = []
+
+            if not post is None:
+                _parts += [_FINAL_MARKER[0], "post", int(post)]
+
                 if dev is None:
-                    postdev.append(_FINAL_MARKER[0])
-            if dev is not None:
-                postdev.extend(('dev', int(dev)))
-            parts.append(tuple(postdev))
+                    _parts += [_FINAL_MARKER[0]]
+
+            if not dev is None:
+                _parts += ["dev", int(dev)]
+
+            parts += [tuple(_parts)]
         else:
-            parts.append(_FINAL_MARKER)
+            parts += [_FINAL_MARKER]
 
         if parts[0][0] > 1980:
             raise ValueError("Huge major version number '{major}' in '{version}', which might cause future problems".format(major=parts[0][0], version=version))
