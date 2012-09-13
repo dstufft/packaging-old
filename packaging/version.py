@@ -58,8 +58,12 @@ class Version(object):
             where the major number is less than that huge major number).
         """
         self.version = version
-        self.is_final = True  # by default, consider a version as final.
+        self.parts = None
         self._parse(self.version, error_on_huge_major_num)
+
+    @property
+    def final(self):
+        return all([x[-1] == "z" for x in self.parts[1:]])
 
     def _parse(self, s, error_on_huge_major_num=True):
         """Parses a string version into parts."""
@@ -84,7 +88,6 @@ class Version(object):
             block += self._parse_numdots(groups.get('prerelversion'), s,
                                          pad_zeros_length=1)
             parts.append(tuple(block))
-            self.is_final = False
         else:
             parts.append(_FINAL_MARKER)
 
@@ -99,7 +102,6 @@ class Version(object):
                     postdev.append(_FINAL_MARKER[0])
             if dev is not None:
                 postdev.extend(('dev', int(dev)))
-                self.is_final = False
             parts.append(tuple(postdev))
         else:
             parts.append(_FINAL_MARKER)

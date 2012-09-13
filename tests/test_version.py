@@ -165,7 +165,7 @@ def test_suggest_normalized_version(input, expected):
     ("1.0c3", False),
 ])
 def test_version_is_final(version, final):
-    assert V(version).is_final == final
+    assert V(version).final == final
 
 
 @pytest.mark.parametrize(("predicate", "name", "predicates"), PREDICATES)
