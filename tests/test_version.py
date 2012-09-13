@@ -175,6 +175,11 @@ def test_basic_predicate(predicate, name, predicates):
 
 @pytest.mark.parametrize("predicate", [x[0] for x in PREDICATES])
 def test_repr_predicate(predicate):
+    assert repr(VersionPredicate(predicate)) == "VersionPredicate('%s')" % predicate
+
+
+@pytest.mark.parametrize("predicate", [x[0] for x in PREDICATES])
+def test_str_predicate(predicate):
     assert str(VersionPredicate(predicate)) == predicate
 
 
