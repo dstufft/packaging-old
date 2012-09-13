@@ -15,7 +15,7 @@ setup(
     install_requires=[],
 
     extras_require={
-        "test": ["pytest"]
+        "test": ["pytest", "pytest-cov"],
     },
 
     packages=find_packages(exclude=["tests"]),
