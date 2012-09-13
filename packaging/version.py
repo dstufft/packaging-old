@@ -138,16 +138,14 @@ class Version(object):
         return [pad(parts, length) for parts in all_parts]
 
 
-# A predicate is: "ProjectName (VERSION1, VERSION2, ..)
-_PREDICATE = re.compile(r"(?i)^\s*(\w[\s\w-]*(?:\.\w*)*)(.*)")
-_VERSIONS = re.compile(r"^\s*\((?P<versions>.*)\)\s*$")
-_SPLIT_CMP = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
-
-
 class VersionPredicate(object):
     """
     Defines a predicate: ProjectName (>ver1,ver2, ..)
     """
+
+    _predicate_regex = re.compile(r"(?i)^\s*(\w[\s\w-]*(?:\.\w*)*)(.*)")
+    _versions_regex = re.compile(r"^\s*\((?P<versions>.*)\)\s*$")
+    _split_cmp_regex = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
 
     _operators = {
         "": lambda x, y: str(x).startswith(str(y)),
@@ -162,7 +160,7 @@ class VersionPredicate(object):
     def __init__(self, predicate):
         self._string = predicate
         predicate = predicate.strip()
-        match = _PREDICATE.match(predicate)
+        match = self._predicate_regex.match(predicate)
 
         if match is None:
             raise ValueError("Bad predicate '{predicate}'".format(predicate=predicate))
@@ -174,7 +172,7 @@ class VersionPredicate(object):
         if not predicates:
             return
 
-        predicates = _VERSIONS.match(predicates.strip())
+        predicates = self._versions_regex.match(predicates.strip())
         predicates = predicates.groupdict()
 
         if predicates["versions"]:
@@ -195,9 +193,8 @@ class VersionPredicate(object):
 
         return all([self._operators[operator](version, predicate) for operator, predicate in self.predicates])
 
-    @staticmethod
-    def _split_predicate(predicate):
-        match = _SPLIT_CMP.match(predicate)
+    def _split_predicate(self, predicate):
+        match = self._split_cmp_regex.match(predicate)
         if match is None:
             # Use the special startswith feature
             comp, version = "", predicate
