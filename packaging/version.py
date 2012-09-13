@@ -137,7 +137,7 @@ class Version(object):
         return [pad(parts, length) for parts in all_parts]
 
 
-def suggest_normalized_version(version, cls=Version):
+def suggest(version, cls=Version):
     """
     Suggest a normalized version close to the given version string.
 

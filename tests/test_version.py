@@ -1,8 +1,7 @@
 import pytest
 
 from packaging.version import Version as V
-from packaging.version import suggest_normalized_version as suggest
-from packaging.version import VersionPredicate
+from packaging.version import VersionPredicate, suggest
 
 
 VERSIONS = [
