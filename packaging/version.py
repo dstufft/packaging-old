@@ -96,8 +96,11 @@ class Version(object):
         return hash(self.parts)
 
     def _parse(self, s, error_on_huge_major_num=True):
-        """Parses a string version into parts."""
+        """
+        Parses a string version into parts.
+        """
         match = _VERSION_RE.search(s)
+
         if not match:
             raise ValueError("Invalid version '{version}'".format(version=s))
 
