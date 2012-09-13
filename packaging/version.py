@@ -39,7 +39,7 @@ _VERSION_RE = re.compile(r'''
 
 class Version(object):
 
-    def __init__(self, version, error_on_huge_major_num=True, drop_trailing_zeros=False):
+    def __init__(self, version, error_on_huge_major_num=True):
         """Create a Version instance from a version string.
 
         @param s {str} The version string.
@@ -56,13 +56,9 @@ class Version(object):
             and, e.g. downstream Linux package managers, will forever remove
             the possibility of using a version number like "1.0" (i.e.
             where the major number is less than that huge major number).
-        @param drop_trailing_zeros {bool} Whether to drop trailing zeros
-
-            from the returned list. Default True.
         """
         self.version = version
         self.is_final = True  # by default, consider a version as final.
-        self.drop_trailing_zeros = drop_trailing_zeros
         self._parse(self.version, error_on_huge_major_num)
 
     @classmethod
@@ -130,9 +126,6 @@ class Version(object):
             if len(n) > 1 and n[0] == '0':
                 raise ValueError("Cannot have leading zero in a version number segment: '{number}' in '{version}'".format(number=n, version=full_ver_str))
             nums.append(int(n))
-        if self.drop_trailing_zeros:
-            while nums and nums[-1] == 0:
-                nums.pop()
         while len(nums) < pad_zeros_length:
             nums.append(0)  # @@@ Not tested
         return nums
