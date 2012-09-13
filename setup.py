@@ -12,7 +12,9 @@ setup(
     author="Donald Stufft",
     author_email="donald.stufft@gmail.com",
 
-    install_requires=[],
+    install_requires=[
+        "six",
+    ],
 
     extras_require={
         "tests": ["pytest", "pytest-cov", "pytest-pep8"],

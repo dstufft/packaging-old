@@ -3,6 +3,8 @@ Implementation of the version scheme defined in PEP 386.
 """
 import re
 
+import six
+
 
 __all__ = ["Version", "suggest_normalized_version", "VersionPredicate"]
 
@@ -345,7 +347,7 @@ class VersionPredicate(object):
 
     def match(self, version):
         """Check if the provided version matches the predicates."""
-        if isinstance(version, basestring):
+        if isinstance(version, six.string_types):
             version = Version(version)
         for operator, predicate in self.predicates:
             if not self._operators[operator](version, predicate):
