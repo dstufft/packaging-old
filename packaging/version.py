@@ -60,8 +60,7 @@ class Version(object):
             where the major number is less than that huge major number).
         """
         self.version = version
-        self.parts = None
-        self._parse(self.version, error_on_huge_major_num)
+        self.parts = self._parse(self.version, error_on_huge_major_num)
 
     @property
     def final(self):
@@ -107,9 +106,11 @@ class Version(object):
             parts.append(tuple(postdev))
         else:
             parts.append(_FINAL_MARKER)
-        self.parts = tuple(parts)
-        if error_on_huge_major_num and self.parts[0][0] > 1980:
-            raise ValueError("Huge major version number '{major}' in '{version}', which might cause future problems".format(major=self.parts[0][0], version=s))
+
+        if error_on_huge_major_num and parts[0][0] > 1980:
+            raise ValueError("Huge major version number '{major}' in '{version}', which might cause future problems".format(major=parts[0][0], version=s))
+
+        return tuple(parts)
 
     def _parse_numdots(self, s, full_ver_str, pad_zeros_length=0):
         """Parse 'N.N.N' sequences, return a list of ints.
