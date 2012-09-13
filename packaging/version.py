@@ -95,6 +95,10 @@ class Version(object):
     def __hash__(self):
         return hash(self.parts)
 
+    @property
+    def final(self):
+        return all([x[-1] == "z" for x in self.parts[1:]])
+
     @staticmethod
     def _parse(version, error_on_huge_major_num=True):
         """
@@ -163,10 +167,6 @@ class Version(object):
 
         length = max([len(parts[0]) for parts in all_parts])
         return [pad(parts, length) for parts in all_parts]
-
-    @property
-    def final(self):
-        return all([x[-1] == "z" for x in self.parts[1:]])
 
 
 def suggest_normalized_version(s):
