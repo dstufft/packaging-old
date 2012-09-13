@@ -375,9 +375,8 @@ class VersionPredicate(object):
 
         if versions:
             for version in versions.split(','):
-                if version.strip() == '':
-                    continue
-                self.predicates.append(_split_predicate(version))
+                if version.strip():
+                    self.predicates.append(_split_predicate(version))
 
     def match(self, version):
         """Check if the provided version matches the predicates."""
