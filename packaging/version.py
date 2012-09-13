@@ -324,8 +324,7 @@ def suggest_normalized_version(s):
 
 # A predicate is: "ProjectName (VERSION1, VERSION2, ..)
 _PREDICATE = re.compile(r"(?i)^\s*(\w[\s\w-]*(?:\.\w*)*)(.*)")
-_VERSIONS = re.compile(r"^\s*\((?P<versions>.*)\)\s*$|^\s*"
-                        "(?P<versions2>.*)\s*$")
+_VERSIONS = re.compile(r"^\s*\((?P<versions>.*)\)\s*$|^\s*(?P<versions2>.*)\s*$")
 _PLAIN_VERSIONS = re.compile(r"^\s*(.*)\s*$")
 _SPLIT_CMP = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
 
