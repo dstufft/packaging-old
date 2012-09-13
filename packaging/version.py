@@ -1,6 +1,7 @@
 """
 Implementation of the version scheme defined in PEP 386.
 """
+import operator
 import re
 
 from .compat import string_types, total_ordering
@@ -146,8 +147,8 @@ _SPLIT_CMP = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
 def _split_predicate(predicate):
     match = _SPLIT_CMP.match(predicate)
     if match is None:
-        # probably no op, we'll use "=="
-        comp, version = '==', predicate
+        # Use the special startswith feature
+        comp, version = "", predicate
     else:
         comp, version = match.groups()
     return comp, Version(version)
@@ -158,13 +159,15 @@ class VersionPredicate(object):
     Defines a predicate: ProjectName (>ver1,ver2, ..)
     """
 
-    _operators = {"<": lambda x, y: x < y,
-                  ">": lambda x, y: x > y,
-                  "<=": lambda x, y: str(x).startswith(str(y)) or x < y,
-                  ">=": lambda x, y: str(x).startswith(str(y)) or x > y,
-                  "==": lambda x, y: str(x).startswith(str(y)),
-                  "!=": lambda x, y: not str(x).startswith(str(y)),
-                  }
+    _operators = {
+        "": lambda x, y: str(x).startswith(str(y)),
+        "<": operator.lt,
+        ">": operator.gt,
+        "<=": operator.le,
+        ">=": operator.ge,
+        "==": operator.eq,
+        "!=": operator.ne,
+    }
 
     def __init__(self, predicate):
         self._string = predicate
@@ -189,6 +192,9 @@ class VersionPredicate(object):
                 if version.strip():
                     self.predicates.append(_split_predicate(version))
 
+    def __repr__(self):
+        return self._string
+
     def match(self, version):
         """Check if the provided version matches the predicates."""
         if isinstance(version, string_types):
@@ -197,9 +203,6 @@ class VersionPredicate(object):
             if not self._operators[operator](version, predicate):
                 return False
         return True
-
-    def __repr__(self):
-        return self._string
 
 
 def suggest(version, cls=Version):
