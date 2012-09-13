@@ -133,22 +133,13 @@ class Version(object):
         return self.version
 
     @staticmethod
-    def _normalize_num_parts(*all_parts):
-        # @@@ This method is janky
+    def _normalize(*all_parts):
+        def pad(parts, target):
+            amount = target - len(parts[0])
+            return (parts[0] + (0,) * amount,) + parts[1:]
+
         length = max([len(parts[0]) for parts in all_parts])
-
-        results = []
-
-        for parts in all_parts:
-            if len(parts[0]) < length:
-                pad = length - len(parts[0])
-                parts = list(parts)
-                parts[0] = parts[0] + (0,) * pad
-                parts = tuple(parts)
-
-            results.append(parts)
-
-        return results
+        return [pad(parts, length) for parts in all_parts]
 
     def __repr__(self):
         return "%s('%s')" % (self.__class__.__name__, self)
@@ -156,13 +147,13 @@ class Version(object):
     def __eq__(self, other):
         if not isinstance(other, Version):
             raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
-        left, right = self._normalize_num_parts(self.parts, other.parts)
+        left, right = self._normalize(self.parts, other.parts)
         return left == right
 
     def __lt__(self, other):
         if not isinstance(other, Version):
             raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
-        left, right = self._normalize_num_parts(self.parts, other.parts)
+        left, right = self._normalize(self.parts, other.parts)
         return left < right
 
     def __ne__(self, other):
