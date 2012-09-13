@@ -61,11 +61,6 @@ class Version(object):
         self.is_final = True  # by default, consider a version as final.
         self._parse(self.version, error_on_huge_major_num)
 
-    @classmethod
-    def from_parts(cls, version, prerelease=_FINAL_MARKER,
-                   devpost=_FINAL_MARKER):
-        return cls(cls.parts_to_str((version, prerelease, devpost)))
-
     def _parse(self, s, error_on_huge_major_num=True):
         """Parses a string version into parts."""
         match = _VERSION_RE.search(s)
@@ -131,29 +126,7 @@ class Version(object):
         return nums
 
     def __str__(self):
-        return self.parts_to_str(self.parts)
-
-    @classmethod
-    def parts_to_str(cls, parts):
-        """Transforms a version expressed in tuple into its string
-        representation."""
-        # XXX This doesn't check for invalid tuples
-        main, prerel, postdev = parts
-        s = '.'.join(str(v) for v in main)
-        if prerel is not _FINAL_MARKER:
-            s += prerel[0]
-            s += '.'.join(str(v) for v in prerel[1:])
-        # XXX clean up: postdev is always true; code is obscure
-        if postdev and postdev is not _FINAL_MARKER:
-            if postdev[0] == _FINAL_MARKER[0]:
-                postdev = postdev[1:]
-            i = 0
-            while i < len(postdev):
-                if i % 2 == 0:
-                    s += '.'
-                s += str(postdev[i])
-                i += 1
-        return s
+        return self.version
 
     @staticmethod
     def _normalize_num_parts(*all_parts):

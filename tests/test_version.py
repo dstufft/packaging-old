@@ -45,13 +45,6 @@ def test_hash(version, vstring):
     assert set([version]) == set([version, V(vstring)])
 
 
-@pytest.mark.parametrize(("version",), [x[:1] for x in VERSIONS])
-def test_from_parts(version):
-    v2 = V.from_parts(*version.parts)
-    assert version == v2
-    assert str(version) == str(v2)
-
-
 @pytest.mark.parametrize("version", [
     "1", "1.2a", "1.2.3b", "1.02", "1.2a03", "1.2a3.04", "1.2.dev.2",
     "1.2.dev.2", "1.2dev", "1.2.dev", "1.2.dev2.post2", "1.2.post2.dev3.post4"
