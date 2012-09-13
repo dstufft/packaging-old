@@ -192,8 +192,11 @@ class VersionPredicate(object):
                 if version.strip():
                     self.predicates.append(_split_predicate(version))
 
-    def __repr__(self):
+    def __str__(self):
         return self._string
+
+    def __repr__(self):
+        return "%s('%s')" % (self.__class__.__name__, self)
 
     def match(self, version):
         """Check if the provided version matches the predicates."""
