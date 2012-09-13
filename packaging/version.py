@@ -62,9 +62,38 @@ class Version(object):
         self.version = version
         self.parts = self._parse(self.version, error_on_huge_major_num)
 
-    @property
-    def final(self):
-        return all([x[-1] == "z" for x in self.parts[1:]])
+    def __str__(self):
+        return self.version
+
+    def __repr__(self):
+        return "%s('%s')" % (self.__class__.__name__, self)
+
+    def __eq__(self, other):
+        if not isinstance(other, Version):
+            raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
+        left, right = self._normalize(self.parts, other.parts)
+        return left == right
+
+    def __lt__(self, other):
+        if not isinstance(other, Version):
+            raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
+        left, right = self._normalize(self.parts, other.parts)
+        return left < right
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __gt__(self, other):
+        return not (self.__lt__(other) or self.__eq__(other))
+
+    def __le__(self, other):
+        return self.__eq__(other) or self.__lt__(other)
+
+    def __ge__(self, other):
+        return self.__eq__(other) or self.__gt__(other)
+
+    def __hash__(self):
+        return hash(self.parts)
 
     def _parse(self, s, error_on_huge_major_num=True):
         """Parses a string version into parts."""
@@ -111,39 +140,6 @@ class Version(object):
 
         return tuple(parts)
 
-    def __str__(self):
-        return self.version
-
-    def __repr__(self):
-        return "%s('%s')" % (self.__class__.__name__, self)
-
-    def __eq__(self, other):
-        if not isinstance(other, Version):
-            raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
-        left, right = self._normalize(self.parts, other.parts)
-        return left == right
-
-    def __lt__(self, other):
-        if not isinstance(other, Version):
-            raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
-        left, right = self._normalize(self.parts, other.parts)
-        return left < right
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __gt__(self, other):
-        return not (self.__lt__(other) or self.__eq__(other))
-
-    def __le__(self, other):
-        return self.__eq__(other) or self.__lt__(other)
-
-    def __ge__(self, other):
-        return self.__eq__(other) or self.__gt__(other)
-
-    def __hash__(self):
-        return hash(self.parts)
-
     def _parse_numerical_version(self, version):
         """
         Parse 'N.N.N' sequences, return a list of ints.
@@ -162,6 +158,10 @@ class Version(object):
 
         length = max([len(parts[0]) for parts in all_parts])
         return [pad(parts, length) for parts in all_parts]
+
+    @property
+    def final(self):
+        return all([x[-1] == "z" for x in self.parts[1:]])
 
 
 def suggest_normalized_version(s):
