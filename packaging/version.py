@@ -352,6 +352,7 @@ class VersionPredicate(object):
         self._string = predicate
         predicate = predicate.strip()
         match = _PREDICATE.match(predicate)
+
         if match is None:
             raise ValueError('Bad predicate "%s"' % predicate)
 
