@@ -76,17 +76,17 @@ class Version(object):
         parts = []
 
         # main version
-        block = self._parse_numdots(groups['version'], s, 2)
+        block = self._parse_numerical_version(groups["version"])
         extraversion = groups.get('extraversion')
         if extraversion not in ('', None):
-            block += self._parse_numdots(extraversion[1:], s)
+            block += self._parse_numerical_version(extraversion[1:])
         parts.append(tuple(block))
 
         # prerelease
         prerel = groups.get('prerel')
         if prerel is not None:
             block = [prerel]
-            block += self._parse_numdots(groups.get('prerelversion'), s, pad_zeros_length=1)
+            block += self._parse_numerical_version(groups.get("prerelversion"))
             parts.append(tuple(block))
         else:
             parts.append(_FINAL_MARKER)
@@ -110,22 +110,6 @@ class Version(object):
             raise ValueError("Huge major version number '{major}' in '{version}', which might cause future problems".format(major=parts[0][0], version=s))
 
         return tuple(parts)
-
-    def _parse_numdots(self, s, full_ver_str):
-        """Parse 'N.N.N' sequences, return a list of ints.
-
-        @param s {str} 'N.N.N...' sequence to be parsed
-        @param full_ver_str {str} The full version string from which this
-            comes. Used for error strings.
-                @param pad_zeros_length {int} The length to which to pad the
-            returned list with zeros, if necessary. Default 0.
-        """
-        nums = []
-        for n in s.split("."):
-            if len(n) > 1 and n[0] == '0':
-                raise ValueError("Cannot have leading zero in a version number segment: '{number}' in '{version}'".format(number=n, version=full_ver_str))
-            nums.append(int(n))
-        return nums
 
     def __str__(self):
         return self.version
@@ -159,6 +143,17 @@ class Version(object):
 
     def __hash__(self):
         return hash(self.parts)
+
+    def _parse_numerical_version(self, version):
+        """
+        Parse 'N.N.N' sequences, return a list of ints.
+        """
+        def cast(number):
+            if len(number) > 1 and number.startswith("0"):
+                raise ValueError("Cannot have leading zero in a version number segment: '{number}' in '{version}'".format(number=number, version=self.version))
+            return int(number)
+
+        return [cast(n) for n in version.split(".")]
 
     @staticmethod
     def _normalize(*all_parts):
