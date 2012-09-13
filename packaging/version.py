@@ -26,17 +26,16 @@ __all__ = ["Version", "VersionPredicate", "suggest_normalized_version"]
 # 'rc' we must use 'z'
 _FINAL_MARKER = ('z',)
 
-_VERSION_RE = re.compile(r'''
+_VERSION_RE = re.compile(r"""
     ^
-    (?P<version>\d+\.\d+)          # minimum 'N.N'
-    (?P<extraversion>(?:\.\d+)*)   # any number of extra '.N' segments
+    (?P<version>\d+\.\d+(?:\.\d+)*)          # minimum 'N.N'
     (?:
         (?P<prerel>[abc]|rc)       # 'a'=alpha, 'b'=beta, 'c'=release candidate
                                    # 'rc'= alias for release candidate
         (?P<prerelversion>\d+(?:\.\d+)*)
     )?
     (?P<postdev>(\.post(?P<post>\d+))?(\.dev(?P<dev>\d+))?)?
-    $''', re.VERBOSE)
+    $""", re.VERBOSE)
 
 
 class Version(object):
@@ -109,11 +108,7 @@ class Version(object):
         parts = []
 
         # main version
-        block = _parse_numerical(groups["version"])
-        extraversion = groups.get('extraversion')
-        if extraversion not in ('', None):
-            block += _parse_numerical(extraversion[1:])
-        parts.append(tuple(block))
+        parts.append(tuple(_parse_numerical(groups["version"])))
 
         # prerelease
         prerel = groups.get('prerel')
