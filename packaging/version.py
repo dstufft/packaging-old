@@ -4,9 +4,7 @@ Implementation of the version scheme defined in PEP 386.
 import re
 
 
-__all__ = ['Version', 'suggest_normalized_version',
-           'VersionPredicate', 'is_valid_version', 'is_valid_versions',
-           'is_valid_predicate']
+__all__ = ["Version", "suggest_normalized_version", "VersionPredicate"]
 
 # A marker used in the second and third parts of the `parts` tuple, for
 # versions that don't have those segments, to sort properly. An example
@@ -390,57 +388,3 @@ class VersionPredicate(object):
 
     def __repr__(self):
         return self._string
-
-
-class _Versions(VersionPredicate):
-    def __init__(self, predicate):
-        predicate = predicate.strip()
-        match = _PLAIN_VERSIONS.match(predicate)
-        self.name = None
-        predicates = match.groups()[0]
-        self.predicates = [_split_predicate(pred.strip())
-                           for pred in predicates.split(',')]
-
-
-class _Version(VersionPredicate):
-    def __init__(self, predicate):
-        predicate = predicate.strip()
-        match = _PLAIN_VERSIONS.match(predicate)
-        self.name = None
-        self.predicates = _split_predicate(match.groups()[0])
-
-
-def is_valid_predicate(predicate):
-    try:
-        VersionPredicate(predicate)
-    except ValueError:
-        return False
-    else:
-        return True
-
-
-def is_valid_versions(predicate):
-    try:
-        _Versions(predicate)
-    except ValueError:
-        return False
-    else:
-        return True
-
-
-def is_valid_version(predicate):
-    try:
-        _Version(predicate)
-    except ValueError:
-        return False
-    else:
-        return True
-
-
-def get_version_predicate(requirements):
-    """Return a VersionPredicate object, from a string or an already
-    existing object.
-    """
-    if isinstance(requirements, basestring):
-        requirements = VersionPredicate(requirements)
-    return requirements
