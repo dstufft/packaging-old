@@ -104,10 +104,9 @@ class Version(object):
             raise ValueError("Invalid version '{version}'".format(version=version))
 
         groups = match.groupdict()
-        parts = []
 
         # main version
-        parts.append(tuple(_parse_numerical(groups["version"])))
+        parts = [tuple(_parse_numerical(groups["version"]))]
 
         # prerelease
         prerel = groups.get("prerel")
