@@ -111,7 +111,7 @@ class Version(object):
 
         return tuple(parts)
 
-    def _parse_numdots(self, s, full_ver_str, pad_zeros_length=0):
+    def _parse_numdots(self, s, full_ver_str):
         """Parse 'N.N.N' sequences, return a list of ints.
 
         @param s {str} 'N.N.N...' sequence to be parsed
@@ -125,8 +125,6 @@ class Version(object):
             if len(n) > 1 and n[0] == '0':
                 raise ValueError("Cannot have leading zero in a version number segment: '{number}' in '{version}'".format(number=n, version=full_ver_str))
             nums.append(int(n))
-        while len(nums) < pad_zeros_length:
-            nums.append(0)  # @@@ Not tested
         return nums
 
     def __str__(self):
