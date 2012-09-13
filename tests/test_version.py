@@ -21,7 +21,7 @@ VERSIONS = [
 
 PREDICATES = [
     ("zope.interface (>3.5.0)", "zope.interface", [(">", V("3.5.0"))]),
-    ("AnotherProject (3.4)", "AnotherProject", [("==", V("3.4"))]),
+    ("AnotherProject (3.4)", "AnotherProject", [("", V("3.4"))]),
     ("OtherProject (<3.0)", "OtherProject", [("<", V("3.0"))]),
     ("NoVersion", "NoVersion", []),
     ("Hey (>=2.5,<2.7)", "Hey", [(">=", V("2.5")), ("<", V("2.7"))]),
