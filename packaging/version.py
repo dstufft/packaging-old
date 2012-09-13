@@ -86,8 +86,7 @@ class Version(object):
         prerel = groups.get('prerel')
         if prerel is not None:
             block = [prerel]
-            block += self._parse_numdots(groups.get('prerelversion'), s,
-                                         pad_zeros_length=1)
+            block += self._parse_numdots(groups.get('prerelversion'), s, pad_zeros_length=1)
             parts.append(tuple(block))
         else:
             parts.append(_FINAL_MARKER)
