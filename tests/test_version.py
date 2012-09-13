@@ -95,6 +95,7 @@ def test_comparison():
     assert V("1.0c4") > V("1.0c1")
 
     assert not V("1.2.0") == V("1.2.3")
+    assert not V("1.2") < V("1.2.0")
     assert not V("1.2.0") < V("1.2.0")
     assert not V("1.2.3") <= V("1.2.0")
     assert not V("1.2.0") >= V("1.2.3")
