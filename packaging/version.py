@@ -154,7 +154,9 @@ def _split_predicate(predicate):
 
 
 class VersionPredicate(object):
-    """Defines a predicate: ProjectName (>ver1,ver2, ..)"""
+    """
+    Defines a predicate: ProjectName (>ver1,ver2, ..)
+    """
 
     _operators = {"<": lambda x, y: x < y,
                   ">": lambda x, y: x > y,
