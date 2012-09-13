@@ -95,14 +95,14 @@ class Version(object):
     def __hash__(self):
         return hash(self.parts)
 
-    def _parse(self, s, error_on_huge_major_num=True):
+    def _parse(self, version, error_on_huge_major_num=True):
         """
         Parses a string version into parts.
         """
-        match = _VERSION_RE.search(s)
+        match = _VERSION_RE.search(version)
 
         if not match:
-            raise ValueError("Invalid version '{version}'".format(version=s))
+            raise ValueError("Invalid version '{version}'".format(version=version))
 
         groups = match.groupdict()
         parts = []
@@ -139,7 +139,7 @@ class Version(object):
             parts.append(_FINAL_MARKER)
 
         if error_on_huge_major_num and parts[0][0] > 1980:
-            raise ValueError("Huge major version number '{major}' in '{version}', which might cause future problems".format(major=parts[0][0], version=s))
+            raise ValueError("Huge major version number '{major}' in '{version}', which might cause future problems".format(major=parts[0][0], version=version))
 
         return tuple(parts)
 
