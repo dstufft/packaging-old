@@ -199,6 +199,7 @@ class VersionPredicate(object):
         """Check if the provided version matches the predicates."""
         if isinstance(version, string_types):
             version = Version(version)
+
         for operator, predicate in self.predicates:
             if not self._operators[operator](version, predicate):
                 return False
