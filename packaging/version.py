@@ -140,7 +140,6 @@ class Version(object):
 # A predicate is: "ProjectName (VERSION1, VERSION2, ..)
 _PREDICATE = re.compile(r"(?i)^\s*(\w[\s\w-]*(?:\.\w*)*)(.*)")
 _VERSIONS = re.compile(r"^\s*\((?P<versions>.*)\)\s*$")
-_PLAIN_VERSIONS = re.compile(r"^\s*(.*)\s*$")
 _SPLIT_CMP = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
 
 
