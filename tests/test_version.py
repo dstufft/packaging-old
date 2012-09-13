@@ -26,6 +26,7 @@ PREDICATES = [
     ("OtherProject (<3.0)", "OtherProject", [("<", V("3.0"))]),
     ("NoVersion", "NoVersion", []),
     ("Hey (>=2.5,<2.7)", "Hey", [(">=", V("2.5")), ("<", V("2.7"))]),
+    ("Foo ()", "Foo", []),
 ]
 
 
