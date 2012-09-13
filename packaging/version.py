@@ -95,7 +95,8 @@ class Version(object):
     def __hash__(self):
         return hash(self.parts)
 
-    def _parse(self, version, error_on_huge_major_num=True):
+    @staticmethod
+    def _parse(version, error_on_huge_major_num=True):
         """
         Parses a string version into parts.
         """
@@ -154,7 +155,8 @@ class Version(object):
 
         return tuple(parts)
 
-    def _normalize(self, *all_parts):
+    @staticmethod
+    def _normalize(*all_parts):
         def pad(parts, target):
             amount = target - len(parts[0])
             return (parts[0] + (0,) * amount,) + parts[1:]
