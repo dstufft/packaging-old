@@ -112,9 +112,9 @@ class Version(object):
         # prerelease
         prerel = groups.get("prerel")
         if prerel is not None:
-            parts.append(tuple([prerel] + _parse_numerical(groups.get("prerelversion"))))
+            parts += [tuple([prerel] + _parse_numerical(groups.get("prerelversion")))]
         else:
-            parts.append(("z",))
+            parts += [("z",)]
 
         # postdev
         if groups.get("postdev"):
