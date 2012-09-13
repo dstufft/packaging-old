@@ -172,7 +172,7 @@ class VersionPredicate(object):
         match = _PREDICATE.match(predicate)
 
         if match is None:
-            raise ValueError('Bad predicate "%s"' % predicate)
+            raise ValueError("Bad predicate '{predicate}'".format(predicate=predicate))
 
         name, predicates = match.groups()
         self.name = name.strip()
