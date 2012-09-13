@@ -21,11 +21,11 @@ VERSIONS = [
 ]
 
 PREDICATES = [
-    "zope.interface (>3.5.0)",
-    "AnotherProject (3.4)",
-    "OtherProject (<3.0)",
-    "NoVersion",
-    "Hey (>=2.5,<2.7)",
+    ("zope.interface (>3.5.0)", "zope.interface", [(">", V("3.5.0"))]),
+    ("AnotherProject (3.4)", "AnotherProject", [("==", V("3.4"))]),
+    ("OtherProject (<3.0)", "OtherProject", [("<", V("3.0"))]),
+    ("NoVersion", "NoVersion", []),
+    ("Hey (>=2.5,<2.7)", "Hey", [(">=", V("2.5")), ("<", V("2.7"))]),
 ]
 
 
@@ -173,12 +173,14 @@ def test_version_is_final(version, final):
     assert V(version).is_final == final
 
 
-@pytest.mark.parametrize("predicate", PREDICATES)
-def test_basic_predicate(predicate):
-    VersionPredicate(predicate)
+@pytest.mark.parametrize(("predicate", "name", "predicates"), PREDICATES)
+def test_basic_predicate(predicate, name, predicates):
+    pred = VersionPredicate(predicate)
+    assert pred.name == name
+    assert pred.predicates == predicates
 
 
-@pytest.mark.parametrize("predicate", PREDICATES)
+@pytest.mark.parametrize("predicate", [x[0] for x in PREDICATES])
 def test_repr_predicate(predicate):
     assert str(VersionPredicate(predicate)) == predicate
 
