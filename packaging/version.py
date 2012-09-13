@@ -6,7 +6,7 @@ import re
 from .compat import string_types, total_ordering
 
 
-__all__ = ["Version", "VersionPredicate", "suggest_normalized_version"]
+__all__ = ["Version", "VersionPredicate", "suggest"]
 
 # A marker used in the second and third parts of the `parts` tuple, for
 # versions that don't have those segments, to sort properly. An example
