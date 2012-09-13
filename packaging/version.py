@@ -6,7 +6,7 @@ import re
 import six
 
 
-__all__ = ["Version", "suggest_normalized_version", "VersionPredicate"]
+__all__ = ["Version", "VersionPredicate", "suggest_normalized_version"]
 
 # A marker used in the second and third parts of the `parts` tuple, for
 # versions that don't have those segments, to sort properly. An example
@@ -44,7 +44,7 @@ class Version(object):
     def __init__(self, version, error_on_huge_major_num=True):
         """Create a Version instance from a version string.
 
-        @param s {str} The version string.
+        @param version {str} The version string.
         @param error_on_huge_major_num {bool} Whether to consider an
             apparent use of a year or full date as the major version number
             an error. Default True. One of the observed patterns on PyPI before
