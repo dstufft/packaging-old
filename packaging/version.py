@@ -25,20 +25,20 @@ __all__ = ["Version", "VersionPredicate", "suggest_normalized_version"]
 # 'f' for 'final' would be kind of nice, but due to bugs in the support of
 # 'rc' we must use 'z'
 
-_VERSION_RE = re.compile(r"""
-    ^
-    (?P<version>\d+\.\d+(?:\.\d+)*)          # minimum 'N.N'
-    (?:
-        (?P<prerel>[abc]|rc)       # 'a'=alpha, 'b'=beta, 'c'=release candidate
-                                   # 'rc'= alias for release candidate
-        (?P<prerelversion>\d+(?:\.\d+)*)
-    )?
-    (?P<postdev>(\.post(?P<post>\d+))?(\.dev(?P<dev>\d+))?)?
-    $""", re.VERBOSE)
-
 
 @total_ordering
 class Version(object):
+
+    _version_regex = re.compile(r"""
+        ^
+        (?P<version>\d+\.\d+(?:\.\d+)*)          # minimum 'N.N'
+        (?:
+            (?P<prerel>[abc]|rc)       # 'a'=alpha, 'b'=beta, 'c'=release candidate
+                                       # 'rc'= alias for release candidate
+            (?P<prerelversion>\d+(?:\.\d+)*)
+        )?
+        (?P<postdev>(\.post(?P<post>\d+))?(\.dev(?P<dev>\d+))?)?
+        $""", re.VERBOSE)
 
     def __init__(self, version, *args, **kwargs):
         super(Version, self).__init__(*args, **kwargs)
@@ -71,8 +71,7 @@ class Version(object):
     def final(self):
         return all([x[-1] == "z" for x in self.parts[1:]])
 
-    @staticmethod
-    def _parse(version):
+    def _parse(self, version):
         """
         Parses a string version into parts.
         """
@@ -87,7 +86,7 @@ class Version(object):
 
             return [cast(n) for n in numerical.split(".")]
 
-        match = _VERSION_RE.search(version)
+        match = self._version_regex.search(version)
 
         if not match:
             raise ValueError("Invalid version '{version}'".format(version=version))
