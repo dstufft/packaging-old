@@ -137,6 +137,70 @@ class Version(object):
         return [pad(parts, length) for parts in all_parts]
 
 
+# A predicate is: "ProjectName (VERSION1, VERSION2, ..)
+_PREDICATE = re.compile(r"(?i)^\s*(\w[\s\w-]*(?:\.\w*)*)(.*)")
+_VERSIONS = re.compile(r"^\s*\((?P<versions>.*)\)\s*$")
+_PLAIN_VERSIONS = re.compile(r"^\s*(.*)\s*$")
+_SPLIT_CMP = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
+
+
+def _split_predicate(predicate):
+    match = _SPLIT_CMP.match(predicate)
+    if match is None:
+        # probably no op, we'll use "=="
+        comp, version = '==', predicate
+    else:
+        comp, version = match.groups()
+    return comp, Version(version)
+
+
+class VersionPredicate(object):
+    """Defines a predicate: ProjectName (>ver1,ver2, ..)"""
+
+    _operators = {"<": lambda x, y: x < y,
+                  ">": lambda x, y: x > y,
+                  "<=": lambda x, y: str(x).startswith(str(y)) or x < y,
+                  ">=": lambda x, y: str(x).startswith(str(y)) or x > y,
+                  "==": lambda x, y: str(x).startswith(str(y)),
+                  "!=": lambda x, y: not str(x).startswith(str(y)),
+                  }
+
+    def __init__(self, predicate):
+        self._string = predicate
+        predicate = predicate.strip()
+        match = _PREDICATE.match(predicate)
+
+        if match is None:
+            raise ValueError('Bad predicate "%s"' % predicate)
+
+        name, predicates = match.groups()
+        self.name = name.strip()
+        self.predicates = []
+
+        if not predicates:
+            return
+
+        predicates = _VERSIONS.match(predicates.strip())
+        predicates = predicates.groupdict()
+
+        if predicates["versions"]:
+            for version in predicates["versions"].split(","):
+                if version.strip():
+                    self.predicates.append(_split_predicate(version))
+
+    def match(self, version):
+        """Check if the provided version matches the predicates."""
+        if isinstance(version, string_types):
+            version = Version(version)
+        for operator, predicate in self.predicates:
+            if not self._operators[operator](version, predicate):
+                return False
+        return True
+
+    def __repr__(self):
+        return self._string
+
+
 def suggest(version, cls=Version):
     """
     Suggest a normalized version close to the given version string.
@@ -249,67 +313,3 @@ def suggest(version, cls=Version):
         pass
 
     return None
-
-
-# A predicate is: "ProjectName (VERSION1, VERSION2, ..)
-_PREDICATE = re.compile(r"(?i)^\s*(\w[\s\w-]*(?:\.\w*)*)(.*)")
-_VERSIONS = re.compile(r"^\s*\((?P<versions>.*)\)\s*$")
-_PLAIN_VERSIONS = re.compile(r"^\s*(.*)\s*$")
-_SPLIT_CMP = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
-
-
-def _split_predicate(predicate):
-    match = _SPLIT_CMP.match(predicate)
-    if match is None:
-        # probably no op, we'll use "=="
-        comp, version = '==', predicate
-    else:
-        comp, version = match.groups()
-    return comp, Version(version)
-
-
-class VersionPredicate(object):
-    """Defines a predicate: ProjectName (>ver1,ver2, ..)"""
-
-    _operators = {"<": lambda x, y: x < y,
-                  ">": lambda x, y: x > y,
-                  "<=": lambda x, y: str(x).startswith(str(y)) or x < y,
-                  ">=": lambda x, y: str(x).startswith(str(y)) or x > y,
-                  "==": lambda x, y: str(x).startswith(str(y)),
-                  "!=": lambda x, y: not str(x).startswith(str(y)),
-                  }
-
-    def __init__(self, predicate):
-        self._string = predicate
-        predicate = predicate.strip()
-        match = _PREDICATE.match(predicate)
-
-        if match is None:
-            raise ValueError('Bad predicate "%s"' % predicate)
-
-        name, predicates = match.groups()
-        self.name = name.strip()
-        self.predicates = []
-
-        if not predicates:
-            return
-
-        predicates = _VERSIONS.match(predicates.strip())
-        predicates = predicates.groupdict()
-
-        if predicates["versions"]:
-            for version in predicates["versions"].split(","):
-                if version.strip():
-                    self.predicates.append(_split_predicate(version))
-
-    def match(self, version):
-        """Check if the provided version matches the predicates."""
-        if isinstance(version, string_types):
-            version = Version(version)
-        for operator, predicate in self.predicates:
-            if not self._operators[operator](version, predicate):
-                return False
-        return True
-
-    def __repr__(self):
-        return self._string
