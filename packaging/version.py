@@ -38,23 +38,7 @@ _VERSION_RE = re.compile(r'''
 
 
 class Version(object):
-    """A rational version.
 
-    Good:
-        1.2         # equivalent to "1.2.0"
-        1.2.0
-        1.2a1
-        1.2.3a2
-        1.2.3b1
-        1.2.3c1
-        1.2.3.4
-        TODO: fill this out
-
-    Bad:
-        1           # mininum two numbers
-        1.2a        # release level must have a release serial
-        1.2.3b
-    """
     def __init__(self, version, error_on_huge_major_num=True, drop_trailing_zeros=False):
         """Create a Version instance from a version string.
 
