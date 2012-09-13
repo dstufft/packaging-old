@@ -150,7 +150,7 @@ class Version(object):
             while nums and nums[-1] == 0:
                 nums.pop()
         while len(nums) < pad_zeros_length:
-            nums.append(0)
+            nums.append(0)  # @@@ Not tested
         return nums
 
     def __str__(self):
@@ -359,11 +359,11 @@ class VersionPredicate(object):
         self.name = name.strip()
         self.predicates = []
         if predicates is None:
-            return
+            return  # @@@ Not tested
 
         predicates = _VERSIONS.match(predicates.strip())
         if predicates is None:
-            return
+            return  # @@@ Not tested
 
         predicates = predicates.groupdict()
         if predicates['versions'] is not None:
