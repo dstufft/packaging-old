@@ -200,10 +200,7 @@ class VersionPredicate(object):
         if isinstance(version, string_types):
             version = Version(version)
 
-        for operator, predicate in self.predicates:
-            if not self._operators[operator](version, predicate):
-                return False
-        return True
+        return all([self._operators[operator](version, predicate) for operator, predicate in self.predicates])
 
 
 def suggest(version, cls=Version):
