@@ -132,15 +132,6 @@ class Version(object):
     def __str__(self):
         return self.version
 
-    @staticmethod
-    def _normalize(*all_parts):
-        def pad(parts, target):
-            amount = target - len(parts[0])
-            return (parts[0] + (0,) * amount,) + parts[1:]
-
-        length = max([len(parts[0]) for parts in all_parts])
-        return [pad(parts, length) for parts in all_parts]
-
     def __repr__(self):
         return "%s('%s')" % (self.__class__.__name__, self)
 
@@ -168,9 +159,17 @@ class Version(object):
     def __ge__(self, other):
         return self.__eq__(other) or self.__gt__(other)
 
-    # See http://docs.python.org/reference/datamodel#object.__hash__
     def __hash__(self):
         return hash(self.parts)
+
+    @staticmethod
+    def _normalize(*all_parts):
+        def pad(parts, target):
+            amount = target - len(parts[0])
+            return (parts[0] + (0,) * amount,) + parts[1:]
+
+        length = max([len(parts[0]) for parts in all_parts])
+        return [pad(parts, length) for parts in all_parts]
 
 
 def suggest_normalized_version(s):
