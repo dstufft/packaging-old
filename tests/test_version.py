@@ -162,6 +162,17 @@ def test_suggest_normalized_version(input, expected):
     assert suggest(input) == expected
 
 
+@pytest.mark.parametrize(("version", "final"), [
+    ("1.0", True),
+    ("1.0.post456", True),
+    ("1.0.dev1", False),
+    ("1.0a2", False),
+    ("1.0c3", False),
+])
+def test_version_is_final(version, final):
+    assert V(version).is_final == final
+
+
 @pytest.mark.parametrize("predicate", PREDICATES)
 def test_basic_predicate(predicate):
     VersionPredicate(predicate)
@@ -210,17 +221,6 @@ def test_predicates_match(predicate, target, matches):
 ])
 def test_predicate_name(predicate, expected):
     assert VersionPredicate(predicate).name == expected
-
-
-@pytest.mark.parametrize(("version", "final"), [
-    ("1.0", True),
-    ("1.0.post456", True),
-    ("1.0.dev1", False),
-    ("1.0a2", False),
-    ("1.0c3", False),
-])
-def test_version_is_final(version, final):
-    assert V(version).is_final == final
 
 
 def test_micro_predicate():
