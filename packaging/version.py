@@ -24,7 +24,6 @@ __all__ = ["Version", "VersionPredicate", "suggest_normalized_version"]
 #   'dev' < 'z' ----------------------------------------------/
 # 'f' for 'final' would be kind of nice, but due to bugs in the support of
 # 'rc' we must use 'z'
-_FINAL_MARKER = ('z',)
 
 _VERSION_RE = re.compile(r"""
     ^
@@ -115,7 +114,7 @@ class Version(object):
         if prerel is not None:
             parts.append(tuple([prerel] + _parse_numerical(groups.get("prerelversion"))))
         else:
-            parts.append(_FINAL_MARKER)
+            parts.append(("z",))
 
         # postdev
         if groups.get("postdev"):
@@ -124,17 +123,17 @@ class Version(object):
             _parts = []
 
             if not post is None:
-                _parts += [_FINAL_MARKER[0], "post", int(post)]
+                _parts += ["z", "post", int(post)]
 
                 if dev is None:
-                    _parts += [_FINAL_MARKER[0]]
+                    _parts += ["z"]
 
             if not dev is None:
                 _parts += ["dev", int(dev)]
 
             parts += [tuple(_parts)]
         else:
-            parts += [_FINAL_MARKER]
+            parts += [("z",)]
 
         if parts[0][0] > 1980:
             raise ValueError("Huge major version number '{major}' in '{version}', which might cause future problems".format(major=parts[0][0], version=version))
