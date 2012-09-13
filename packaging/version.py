@@ -99,6 +99,17 @@ class Version(object):
         """
         Parses a string version into parts.
         """
+        def _parse_numerical_version(version):
+            """
+            Parse 'N.N.N' sequences, return a list of ints.
+            """
+            def cast(number):
+                if len(number) > 1 and number.startswith("0"):
+                    raise ValueError("Cannot have leading zero in a version number segment")
+                return int(number)
+
+            return [cast(n) for n in version.split(".")]
+
         match = _VERSION_RE.search(version)
 
         if not match:
@@ -108,17 +119,17 @@ class Version(object):
         parts = []
 
         # main version
-        block = self._parse_numerical_version(groups["version"])
+        block = _parse_numerical_version(groups["version"])
         extraversion = groups.get('extraversion')
         if extraversion not in ('', None):
-            block += self._parse_numerical_version(extraversion[1:])
+            block += _parse_numerical_version(extraversion[1:])
         parts.append(tuple(block))
 
         # prerelease
         prerel = groups.get('prerel')
         if prerel is not None:
             block = [prerel]
-            block += self._parse_numerical_version(groups.get("prerelversion"))
+            block += _parse_numerical_version(groups.get("prerelversion"))
             parts.append(tuple(block))
         else:
             parts.append(_FINAL_MARKER)
@@ -142,17 +153,6 @@ class Version(object):
             raise ValueError("Huge major version number '{major}' in '{version}', which might cause future problems".format(major=parts[0][0], version=version))
 
         return tuple(parts)
-
-    def _parse_numerical_version(self, version):
-        """
-        Parse 'N.N.N' sequences, return a list of ints.
-        """
-        def cast(number):
-            if len(number) > 1 and number.startswith("0"):
-                raise ValueError("Cannot have leading zero in a version number segment: '{number}' in '{version}'".format(number=number, version=self.version))
-            return int(number)
-
-        return [cast(n) for n in version.split(".")]
 
     def _normalize(self, *all_parts):
         def pad(parts, target):
