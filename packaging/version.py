@@ -358,12 +358,14 @@ class VersionPredicate(object):
         name, predicates = match.groups()
         self.name = name.strip()
         self.predicates = []
-        if predicates is None:
-            return  # @@@ Not tested
+
+        if not predicates:
+            return
 
         predicates = _VERSIONS.match(predicates.strip())
-        if predicates is None:
-            return  # @@@ Not tested
+
+        if not predicates:
+            return  # @@@ Not Covered
 
         predicates = predicates.groupdict()
         if predicates['versions'] is not None:
