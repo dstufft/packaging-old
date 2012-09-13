@@ -12,9 +12,7 @@ setup(
     author="Donald Stufft",
     author_email="donald.stufft@gmail.com",
 
-    install_requires=[
-        "six",
-    ],
+    install_requires=[],
 
     extras_require={
         "tests": ["pytest"],
