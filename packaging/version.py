@@ -41,26 +41,11 @@ _VERSION_RE = re.compile(r'''
 
 class Version(object):
 
-    def __init__(self, version, error_on_huge_major_num=True):
-        """Create a Version instance from a version string.
+    def __init__(self, version, *args, **kwargs):
+        super(Version, self).__init__(*args, **kwargs)
 
-        @param version {str} The version string.
-        @param error_on_huge_major_num {bool} Whether to consider an
-            apparent use of a year or full date as the major version number
-            an error. Default True. One of the observed patterns on PyPI before
-            the introduction of `Version` was version numbers like
-            this:
-                2009.01.03
-                20040603
-                2005.01
-            This guard is here to strongly encourage the package author to
-            use an alternate version, because a release deployed into PyPI
-            and, e.g. downstream Linux package managers, will forever remove
-            the possibility of using a version number like "1.0" (i.e.
-            where the major number is less than that huge major number).
-        """
         self.version = version
-        self.parts = self._parse(self.version, error_on_huge_major_num)
+        self.parts = self._parse(self.version)
 
     def __str__(self):
         return self.version
@@ -100,7 +85,7 @@ class Version(object):
         return all([x[-1] == "z" for x in self.parts[1:]])
 
     @staticmethod
-    def _parse(version, error_on_huge_major_num=True):
+    def _parse(version):
         """
         Parses a string version into parts.
         """
@@ -154,7 +139,7 @@ class Version(object):
         else:
             parts.append(_FINAL_MARKER)
 
-        if error_on_huge_major_num and parts[0][0] > 1980:
+        if parts[0][0] > 1980:
             raise ValueError("Huge major version number '{major}' in '{version}', which might cause future problems".format(major=parts[0][0], version=version))
 
         return tuple(parts)

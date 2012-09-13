@@ -56,7 +56,6 @@ def test_irrational_versions(version):
 
 def test_huge_version():
     assert str(V("1980.0")) == "1980.0"
-    assert str(V("1981.0", error_on_huge_major_num=False)) == "1981.0"
 
     with pytest.raises(ValueError):
         V("1981.0")
