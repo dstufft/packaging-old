@@ -178,18 +178,38 @@ class Version(object):
                 i += 1
         return s
 
+    @staticmethod
+    def _normalize_num_parts(*all_parts):
+        # @@@ This method is janky
+        length = max([len(parts[0]) for parts in all_parts])
+
+        results = []
+
+        for parts in all_parts:
+            if len(parts[0]) < length:
+                pad = length - len(parts[0])
+                parts = list(parts)
+                parts[0] = parts[0] + (0,) * pad
+                parts = tuple(parts)
+
+            results.append(parts)
+
+        return results
+
     def __repr__(self):
         return "%s('%s')" % (self.__class__.__name__, self)
 
     def __eq__(self, other):
         if not isinstance(other, Version):
             raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
-        return self.parts == other.parts
+        left, right = self._normalize_num_parts(self.parts, other.parts)
+        return left == right
 
     def __lt__(self, other):
         if not isinstance(other, Version):
             raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
-        return self.parts < other.parts
+        left, right = self._normalize_num_parts(self.parts, other.parts)
+        return left < right
 
     def __ne__(self, other):
         return not self.__eq__(other)
