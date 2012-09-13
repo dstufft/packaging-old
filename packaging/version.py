@@ -99,16 +99,16 @@ class Version(object):
         """
         Parses a string version into parts.
         """
-        def _parse_numerical_version(version):
+        def _parse_numerical(numerical):
             """
             Parse 'N.N.N' sequences, return a list of ints.
             """
             def cast(number):
                 if len(number) > 1 and number.startswith("0"):
-                    raise ValueError("Cannot have leading zero in a version number segment")
+                    raise ValueError("Cannot have leading zero in a version number segment: '{number}' in '{version}'".format(number=number, version=version))
                 return int(number)
 
-            return [cast(n) for n in version.split(".")]
+            return [cast(n) for n in numerical.split(".")]
 
         match = _VERSION_RE.search(version)
 
@@ -119,17 +119,17 @@ class Version(object):
         parts = []
 
         # main version
-        block = _parse_numerical_version(groups["version"])
+        block = _parse_numerical(groups["version"])
         extraversion = groups.get('extraversion')
         if extraversion not in ('', None):
-            block += _parse_numerical_version(extraversion[1:])
+            block += _parse_numerical(extraversion[1:])
         parts.append(tuple(block))
 
         # prerelease
         prerel = groups.get('prerel')
         if prerel is not None:
             block = [prerel]
-            block += _parse_numerical_version(groups.get("prerelversion"))
+            block += _parse_numerical(groups.get("prerelversion"))
             parts.append(tuple(block))
         else:
             parts.append(_FINAL_MARKER)
