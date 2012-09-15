@@ -141,6 +141,16 @@ class Version(object):
         return [pad(parts, length) for parts in all_parts]
 
 
+def _same_series(version, target):
+    try:
+        version = [int(x.strip()) for x in str(version).split(".")]
+        target = [int(x.strip()) for x in str(target).split(".")]
+    except ValueError:
+        return False
+
+    return target == version[:len(target)]
+
+
 class VersionPredicate(object):
     """
     Defines a predicate: ProjectName (>ver1,ver2, ..)
@@ -151,7 +161,7 @@ class VersionPredicate(object):
     _split_cmp_regex = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
 
     _operators = {
-        "": lambda x, y: str(x).startswith(str(y)),  # @@@ Fix to take into account the .s
+        "": _same_series,
         "<": operator.lt,
         ">": operator.gt,
         "<=": operator.le,
