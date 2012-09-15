@@ -6,7 +6,7 @@ setup(
     version="0.1",
 
     description="Possible implementation of Packaging primitives for Python",
-    #long_description=open("README.rst").read(),
+    long_description=open("README.rst").read(),
     url="https://github.com/dstufft/packaging/",
 
     author="Donald Stufft",
