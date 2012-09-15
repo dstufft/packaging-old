@@ -4,6 +4,30 @@ from .schema import Schema, And, Use, Optional, SchemaError
 from ..version import Version, VersionPredicate
 from ..compat import string_type
 
+__all__ = [
+    # Schema
+    "SchemaError",
+
+    # Distribution
+    "distribution",
+
+    # Manifest
+    "manifest_version",
+
+    # Metadata
+    "metadata",
+    "metadata_name", "metadata_version", "metadata_summary", "metadata_description",
+    "metadata_keywords", "metadata_author", "metadata_author_email", "metadata_maintainer",
+    "metadata_maintainer_email", "metadata_license", "metadata_classifiers", "metadata_uris",
+    "metadata_platforms", "metadata_supported_platforms",
+
+    # Dependencies
+    "dependencies",
+    "dependencies_python", "dependencies_extras", "dependencies_setup_requires",
+    "dependencies_requires", "dependencies_provides", "dependencies_obsoletes",
+    "dependencies_externals",
+]
+
 # manifest-version
 manifest_version = Schema(And(string_type, "2.0"))
 
