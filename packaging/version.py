@@ -208,7 +208,9 @@ class VersionPredicate(object):
         return not self.__eq__(other)
 
     def match(self, version):
-        """Check if the provided version matches the predicates."""
+        """
+        Check if the provided version matches the predicates.
+        """
         if isinstance(version, string_type):
             version = Version(version)
 
