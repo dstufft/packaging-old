@@ -5,13 +5,13 @@ import types
 PY3 = sys.version_info[0] == 3
 
 if PY3:
-    string_types = str,
+    string_type = str
     integer_types = int,
     class_types = type,
     text_type = str
     binary_type = bytes
 else:
-    string_types = basestring,
+    string_type = basestring
     integer_types = (int, long)
     class_types = (type, types.ClassType)
     text_type = unicode

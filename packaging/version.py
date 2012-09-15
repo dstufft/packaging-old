@@ -4,7 +4,7 @@ Implementation of the version scheme defined in PEP 386.
 import operator
 import re
 
-from .compat import string_types, total_ordering
+from .compat import string_type, total_ordering
 
 
 __all__ = ["Version", "VersionPredicate", "suggest"]
@@ -151,7 +151,7 @@ class VersionPredicate(object):
     _split_cmp_regex = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
 
     _operators = {
-        "": lambda x, y: str(x).startswith(str(y)),
+        "": lambda x, y: str(x).startswith(str(y)),  # @@@ Fix to take into account the .s
         "<": operator.lt,
         ">": operator.gt,
         "<=": operator.le,
@@ -170,7 +170,7 @@ class VersionPredicate(object):
 
         name, predicates = match.groups()
         self.name = name.strip()
-        self.predicates = []
+        self.predicates = set()
 
         if not predicates:
             return
@@ -181,7 +181,7 @@ class VersionPredicate(object):
         if predicates["versions"]:
             for version in predicates["versions"].split(","):
                 if version.strip():
-                    self.predicates.append(self._split_predicate(version))
+                    self.predicates.add(self._split_predicate(version))
 
     def __str__(self):
         return self._string
@@ -189,9 +189,17 @@ class VersionPredicate(object):
     def __repr__(self):
         return "%s('%s')" % (self.__class__.__name__, self)
 
+    def __eq__(self, other):
+        if not isinstance(other, VersionPredicate):
+            raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
+        return (self.name, self.predicates) == (other.name, other.predicates)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def match(self, version):
         """Check if the provided version matches the predicates."""
-        if isinstance(version, string_types):
+        if isinstance(version, string_type):
             version = Version(version)
 
         return all([self._operators[operator](version, predicate) for operator, predicate in self.predicates])
