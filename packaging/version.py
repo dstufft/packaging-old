@@ -170,7 +170,7 @@ class VersionPredicate(object):
 
         name, predicates = match.groups()
         self.name = name.strip()
-        self.predicates = []
+        self.predicates = set()
 
         if not predicates:
             return
@@ -181,13 +181,21 @@ class VersionPredicate(object):
         if predicates["versions"]:
             for version in predicates["versions"].split(","):
                 if version.strip():
-                    self.predicates.append(self._split_predicate(version))
+                    self.predicates.add(self._split_predicate(version))
 
     def __str__(self):
         return self._string
 
     def __repr__(self):
         return "%s('%s')" % (self.__class__.__name__, self)
+
+    def __eq__(self, other):
+        if not isinstance(other, VersionPredicate):
+            raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
+        return (self.name, self.predicates) == (other.name, other.predicates)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def match(self, version):
         """Check if the provided version matches the predicates."""
