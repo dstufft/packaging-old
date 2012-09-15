@@ -62,13 +62,14 @@ class And(object):
 class Or(And):
 
     def validate(self, data):
+        err = None
         for s in [Schema(s, error=self._error) for s in self._args]:
             try:
                 return s.validate(data)
             except SchemaError as x:
-                pass
-        raise SchemaError(['%r did not validate %r' % (self, data)] + x.autos,
-                         [self._error] + x.errors)
+                err = x
+        raise SchemaError(['%r did not validate %r' % (self, data)] + err.autos,
+                         [self._error] + err.errors)
 
 
 class Use(object):
