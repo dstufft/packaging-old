@@ -194,7 +194,6 @@ def test_invalid_predicate_raises():
     ("Ho (<3.0)", "2.6", True),
     ("Ho (<3.0,!=2.5)", "2.6.0", True),
     ("Ho (2.5)", "2.5.4", True),
-    ("Hey (<=2.5)", "2.5.9", False),
     ("Hey (>=2.5)", "2.5.1", True),
     ("Hey 2.5", "2.5.1", True),
     ("virtualenv5 (1.0)", "1.0", True),
@@ -204,6 +203,7 @@ def test_invalid_predicate_raises():
     ("vi5two 1.0", "1.0", True),
     ("5two 1.0", "1.0", True),
 
+    ("Hey (<=2.5)", "2.5.9", False),
     ("Hey (>=2.5,!=2.6,<2.7)", "2.6", False),
     ("Ho (<3.0,!=2.6)", "2.6.0", False),
     ("Ho (!=2.5)", "2.5.0", False),
