@@ -151,7 +151,7 @@ class VersionPredicate(object):
     _split_cmp_regex = re.compile(r"^\s*(<=|>=|<|>|!=|==)\s*([^\s,]+)\s*$")
 
     _operators = {
-        "": lambda x, y: str(x).startswith(str(y)),
+        "": lambda x, y: str(x).startswith(str(y)),  # @@@ Fix to take into account the .s
         "<": operator.lt,
         ">": operator.gt,
         "<=": operator.le,
