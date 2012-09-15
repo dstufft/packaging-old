@@ -4,7 +4,7 @@ Implementation of the version scheme defined in PEP 386.
 import operator
 import re
 
-from .compat import string_types, total_ordering
+from .compat import string_type, total_ordering
 
 
 __all__ = ["Version", "VersionPredicate", "suggest"]
@@ -191,7 +191,7 @@ class VersionPredicate(object):
 
     def match(self, version):
         """Check if the provided version matches the predicates."""
-        if isinstance(version, string_types):
+        if isinstance(version, string_type):
             version = Version(version)
 
         return all([self._operators[operator](version, predicate) for operator, predicate in self.predicates])
