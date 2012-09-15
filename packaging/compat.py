@@ -25,21 +25,20 @@ except ImportError:
         Class decorator that fills in missing ordering methods
         """
         convert = {
-            "__lt__": [("__gt__", lambda self, other: not (self < other or self == other)),
-                       ("__le__", lambda self, other: self < other or self == other),
+            "__lt__": [("__gt__", lambda self, other: other < self),
+                       ("__le__", lambda self, other: not other < self),
                        ("__ge__", lambda self, other: not self < other)],
-            "__le__": [("__ge__", lambda self, other: not self <= other or self == other),
-                       ("__lt__", lambda self, other: self <= other and not self == other),
+            "__le__": [("__ge__", lambda self, other: other <= self),
+                       ("__lt__", lambda self, other: not other <= self),
                        ("__gt__", lambda self, other: not self <= other)],
-            "__gt__": [("__lt__", lambda self, other: not (self > other or self == other)),
-                       ("__ge__", lambda self, other: self > other or self == other),
+            "__gt__": [("__lt__", lambda self, other: other > self),
+                       ("__ge__", lambda self, other: not other > self),
                        ("__le__", lambda self, other: not self > other)],
-            "__ge__": [("__le__", lambda self, other: (not self >= other) or self == other),
-                       ("__gt__", lambda self, other: self >= other and not self == other),
+            "__ge__": [("__le__", lambda self, other: other >= self),
+                       ("__gt__", lambda self, other: not other >= self),
                        ("__lt__", lambda self, other: not self >= other)]
         }
-        # Find user-defined comparisons (not those inherited from object).
-        roots = [op for op in convert if getattr(cls, op, None) is not getattr(object, op, None)]
+        roots = set(dir(cls)) & set(convert)
         if not roots:
             raise ValueError("must define at least one ordering operation: < > <= >=")
         root = max(roots)       # prefer __lt__ to __le__ to __gt__ to __ge__
