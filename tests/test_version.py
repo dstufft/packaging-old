@@ -204,6 +204,7 @@ def test_invalid_predicate_raises():
     ("5two 1.0", "1.0", True),
 
     ("Hey (2.5)", "2.55", False),
+    ("Hey (2.5)", "2.5.5a1", False),
     ("Hey (<=2.5)", "2.5.9", False),
     ("Hey (>=2.5,!=2.6,<2.7)", "2.6", False),
     ("Ho (<3.0,!=2.6)", "2.6.0", False),
