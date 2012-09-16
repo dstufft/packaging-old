@@ -11,9 +11,6 @@ __all__ = [
     # Distribution
     "distribution",
 
-    # Manifest
-    "manifest_version",
-
     # Metadata
     "metadata",
     "metadata_name", "metadata_version", "metadata_summary", "metadata_description",
@@ -27,9 +24,6 @@ __all__ = [
     "dependencies_requires", "dependencies_provides", "dependencies_obsoletes",
     "dependencies_externals",
 ]
-
-# manifest-version
-manifest_version = Schema(And(string_type, "2.0"))
 
 # metadata
 metadata_name = Schema(And(string_type, lambda x: "/" not in x))  # @@@ What exactly is "ok" for a name?
@@ -85,7 +79,6 @@ dependencies = Schema({
 
 
 distribution = Schema({
-    "manifest-version": manifest_version,
     "metadata": metadata,
     "dependencies": dependencies,
 })

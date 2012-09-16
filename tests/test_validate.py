@@ -5,9 +5,6 @@ from packaging.version import Version, VersionPredicate
 
 
 @pytest.mark.parametrize(("validator", "inp", "expected"), [
-    # manifest-version
-    (validators.manifest_version, "2.0", "2.0"),
-
     # metadata/name
     (validators.metadata_name, "packaging", "packaging"),
 
@@ -78,13 +75,6 @@ def test_metadata_fields_valid(validator, inp, expected):
 
 
 @pytest.mark.parametrize(("validator", "inp"), [
-    # manifest-version
-    (validators.manifest_version, "1.0"),
-    (validators.manifest_version, "1.1"),
-    (validators.manifest_version, "1.2"),
-    (validators.manifest_version, "1.3"),
-    (validators.manifest_version, "2.1"),
-
     # metadata/name
     (validators.metadata_name, "invalid/name"),
     (validators.metadata_name, None),
