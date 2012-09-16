@@ -52,6 +52,7 @@ metadata = Schema({
     "version": metadata_version,
     "summary": metadata_summary,
     Optional("description"): metadata_description,
+    Optional("license"): metadata_license,
     Optional("keywords"): metadata_keywords,
     Optional("author"): metadata_author,
     Optional("author-email"): metadata_author_email,
