@@ -1,6 +1,3 @@
-"""
-Implementation of the version scheme defined in PEP 386.
-"""
 import operator
 import re
 
