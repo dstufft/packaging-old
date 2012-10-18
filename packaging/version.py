@@ -52,16 +52,18 @@ class Version(object):
 
     def __eq__(self, other):
         if not isinstance(other, Version):
-            raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
+            return NotImplemented
+
         left, right = self._normalize(self.parts, other.parts)
         return left == right
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        return not (self == other)
 
     def __lt__(self, other):
         if not isinstance(other, Version):
-            raise TypeError("Cannot compare {left} and {right}".format(left=type(self).__name__, right=type(other).__name__))
+            return NotImplemented
+
         left, right = self._normalize(self.parts, other.parts)
         return left < right
 
