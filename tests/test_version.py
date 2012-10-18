@@ -61,9 +61,6 @@ def test_huge_version():
 
 
 def test_comparison():
-    with pytest.raises(TypeError):
-        V("1.2") < "1.3"
-
     assert V("1.2.0") != V("1.2.3")
     assert V("1.2.0") < V("1.2.3")
     assert V("1.2.0") <= V("1.2.0")
